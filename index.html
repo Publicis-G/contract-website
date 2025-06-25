@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicis Groupe Remote Work Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        img.logo {
+            width: 180px;
+            display: block;
+            margin: 0 auto 20px auto;
+        }
+        h1 {
+            text-align: center;
+            color: #5a3e36;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .signature-pad {
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 100%;
+            height: 150px;
+            cursor: crosshair;
+        }
+        .buttons {
+            margin-top: 10px;
+        }
+        .buttons button {
+            margin-right: 10px;
+        }
+        .submit-btn {
+            margin-top: 20px;
+            background-color: #5a3e36;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        .submit-btn:hover {
+            background-color: #7a5449;
+        }
+        .success-message {
+            display: none;
+            text-align: center;
+            color: green;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="logo.png" alt="Publicis Groupe Logo" class="logo">
+
+    <h1>Publicis Groupe Remote Work Application Form</h1>
+
+    <form id="applicationForm">
+        <h3>Personal Information</h3>
+
+        <label>Name:</label>
+        <input type="text" name="name" required>
+
+        <label>Age:</label>
+        <input type="number" name="age" required>
+
+        <label>Email Address:</label>
+        <input type="email" name="email" required>
+
+        <label>Phone Number:</label>
+        <input type="tel" name="phone" required>
+
+        <label>Residential Address (including state and ZIP code):</label>
+        <textarea name="address" rows="3" required></textarea>
+
+        <label>Position Applied For:</label>
+        <input type="text" name="position" value="Data Transmission" readonly>
+
+        <h3>Probationary Period and Formal Employment</h3>
+        <p>
+            The probationary period is five (5) working days, during which you will receive relevant training and undergo a work task assessment.<br>
+            Upon passing the probationary period assessment, you will become a formal employee of Publicis Groupe.<br><br>
+            As a formal employee, you will be entitled to the following company benefits:
+        </p>
+        <ul>
+            <li>Health insurance</li>
+            <li>401(k) retirement plan</li>
+            <li>Paid time off</li>
+            <li>Employee training and development opportunities</li>
+            <li>Remote work equipment subsidy (depending on the position)</li>
+        </ul>
+
+        <h3>Application Statement</h3>
+        <p>
+            I confirm that the above information is true and accurate, and I have understood the probationary period arrangements and the relevant benefit policies after confirmation of employment.<br>
+            I agree to comply with Publicis Groupe's relevant work regulations and confidentiality agreements.
+        </p>
+
+        <label>Signature (electronic signature is acceptable):</label>
+        <canvas id="signature" class="signature-pad"></canvas>
+        <div class="buttons">
+            <button type="button" onclick="clearSignature()">Clear Signature</button>
+        </div>
+
+        <label>Date:</label>
+        <input type="date" name="date" required>
+
+        <button type="submit" class="submit-btn">Submit Application</button>
+    </form>
+
+    <div class="success-message" id="successMessage">
+        ✅ Submission Successful! Thank you for applying.
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('signature');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mouseup', stop);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('touchstart', start);
+    canvas.addEventListener('touchend', stop);
+    canvas.addEventListener('touchmove', draw);
+
+    function start(e) {
+        e.preventDefault();
+        drawing = true;
+        ctx.beginPath();
+        ctx.moveTo(getX(e), getY(e));
+    }
+
+    function stop(e) {
+        e.preventDefault();
+        drawing = false;
+    }
+
+    function draw(e) {
+        e.preventDefault();
+        if (!drawing) return;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#000';
+        ctx.lineTo(getX(e), getY(e));
+        ctx.stroke();
+    }
+
+    function getX(e) {
+        return (e.touches ? e.touches[0].clientX : e.clientX) - canvas.getBoundingClientRect().left;
+    }
+
+    function getY(e) {
+        return (e.touches ? e.touches[0].clientY : e.clientY) - canvas.getBoundingClientRect().top;
+    }
+
+    function clearSignature() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    document.getElementById('applicationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.getElementById('applicationForm').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+    });
+</script>
+
+</body>
+</html>

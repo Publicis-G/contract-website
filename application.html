@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Publicis Groupe Remote Work Application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .container { background-color: white; padding: 25px; border-radius: 10px; max-width: 800px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        img.logo { display: block; margin: 0 auto 20px auto; max-width: 200px; }
+        h1 { text-align: center; color: #333; }
+        label { display: block; margin-top: 15px; }
+        input[type="text"], input[type="email"], input[type="tel"] { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        canvas { border: 1px solid #ccc; width: 100%; height: 200px; touch-action: none; }
+        .buttons { margin-top: 15px; }
+        button { padding: 8px 16px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img src="logo.png" alt="Publicis Groupe Logo" class="logo">
+    <h1>Publicis Groupe Remote Work Application Form</h1>
+    <form id="applicationForm">
+        <h3>Personal Information</h3>
+        <label>Name:<input type="text" name="name" required></label>
+        <label>Age:<input type="text" name="age" required></label>
+        <label>Email Address:<input type="email" name="email" required></label>
+        <label>Phone Number:<input type="tel" name="phone" required></label>
+        <label>Residential Address (including state and ZIP code):<input type="text" name="address" required></label>
+        <p>Position Applied For: <strong>Data Transmission</strong></p>
+        <h3>Probationary Period and Formal Employment</h3>
+        <p>The probationary period is five (5) working days, during which you will receive relevant training and undergo a work task assessment.
+        Upon passing the probationary period assessment, you will become a formal employee of Publicis Groupe.
+        As a formal employee, you will be entitled to the following company benefits:</p>
+        <ul>
+            <li>Health insurance</li>
+            <li>401(k) retirement plan</li>
+            <li>Paid time off</li>
+            <li>Employee training and development opportunities</li>
+            <li>Remote work equipment subsidy (depending on the position)</li>
+        </ul>
+        <h3>Application Statement</h3>
+        <p>I confirm that the above information is true and accurate, and I have understood the probationary period arrangements and the relevant benefit policies after confirmation of employment. I agree to comply with Publicis Groupe's relevant work regulations and confidentiality agreements.</p>
+        <label>Signature (use mouse or finger):</label>
+        <canvas id="signature" width="600" height="200"></canvas>
+        <div class="buttons">
+            <button type="button" onclick="clearSignature()">Clear Signature</button>
+        </div>
+        <label>Date (MM/DD/YYYY):<input type="text" name="date" required placeholder="MM/DD/YYYY"></label>
+        <div class="buttons">
+            <button type="submit">Submit Application</button>
+        </div>
+    </form>
+</div>
+<script>
+    const canvas = document.getElementById('signature');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    const startDrawing = (e) => { drawing = true; ctx.beginPath(); ctx.moveTo(getX(e), getY(e)); e.preventDefault(); };
+    const draw = (e) => { if (!drawing) return; ctx.lineTo(getX(e), getY(e)); ctx.strokeStyle = "#000"; ctx.lineWidth = 2; ctx.stroke(); e.preventDefault(); };
+    const stopDrawing = () => { drawing = false; };
+    const getX = (e) => (e.touches ? e.touches[0].clientX : e.clientX) - canvas.getBoundingClientRect().left;
+    const getY = (e) => (e.touches ? e.touches[0].clientY : e.clientY) - canvas.getBoundingClientRect().top;
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDrawing);
+    function clearSignature() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+    document.getElementById('applicationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = this.name.value;
+        const age = this.age.value;
+        const address = this.address.value;
+        window.location.href = `success.html?name=${encodeURIComponent(name)}&age=${encodeURIComponent(age)}&address=${encodeURIComponent(address)}`;
+    });
+</script>
+</body>
+</html>

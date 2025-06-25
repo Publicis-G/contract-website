@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicis Groupe Remote Work Application Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f8f8;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        img.logo {
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 200px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        .signature-pad {
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            width: 100%;
+            height: 200px;
+            touch-action: none;
+        }
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #5b3e1a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #7a4f24;
+        }
+        .result {
+            display: none;
+            background: #e7ffe7;
+            padding: 15px;
+            margin-top: 20px;
+            border: 2px solid #5b3e1a;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="logo.png" alt="Publicis Groupe Logo" class="logo">
+    <h1>Publicis Groupe Remote Work Application Form</h1>
+    <form id="contractForm">
+        <h2>Personal Information</h2>
+        <label>Name:</label>
+        <input type="text" name="name" required>
+        
+        <label>Age:</label>
+        <input type="number" name="age" required>
+        
+        <label>Email Address:</label>
+        <input type="email" name="email" required>
+        
+        <label>Phone Number:</label>
+        <input type="text" name="phone" required>
+        
+        <label>Residential Address (including state and ZIP code):</label>
+        <textarea name="address" rows="3" required></textarea>
+        
+        <label>Position Applied For:</label>
+        <input type="text" name="position" value="Data Transmission" readonly>
+
+        <h2>Probationary Period and Formal Employment</h2>
+        <p>The probationary period is five (5) working days, during which you will receive relevant training and undergo a work task assessment.</p>
+        <p>Upon passing the probationary period assessment, you will become a formal employee of Publicis Groupe with full company benefits including:</p>
+        <ul>
+            <li>Health insurance</li>
+            <li>401(k) retirement plan</li>
+            <li>Paid time off</li>
+            <li>Employee training and development opportunities</li>
+            <li>Remote work equipment subsidy (depending on the position)</li>
+        </ul>
+
+        <h2>Application Statement</h2>
+        <p>I confirm that the above information is true and accurate, and I have understood the probationary period arrangements and the relevant benefit policies after confirmation of employment. I agree to comply with Publicis Groupe's relevant work regulations and confidentiality agreements.</p>
+        
+        <label>Signature (electronic signature is acceptable):</label>
+        <canvas id="signature-pad" class="signature-pad"></canvas>
+        <div class="buttons">
+            <button type="button" onclick="clearSignature()">Clear Signature</button>
+        </div>
+
+        <label>Date:</label>
+        <input type="date" name="date" required>
+
+        <div class="buttons">
+            <button type="submit">Submit Application</button>
+        </div>
+    </form>
+
+    <div class="result" id="result">
+        <h2>Submission Successful</h2>
+        <p><strong>Name:</strong> <span id="rName"></span></p>
+        <p><strong>Age:</strong> <span id="rAge"></span></p>
+        <p><strong>Residential Address:</strong> <span id="rAddress"></span></p>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('signature-pad');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function startDraw(e) {
+        drawing = true;
+        [lastX, lastY] = getPos(e);
+    }
+
+    function endDraw() {
+        drawing = false;
+    }
+
+    function draw(e) {
+        if (!drawing) return;
+        const [x, y] = getPos(e);
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        [lastX, lastY] = [x, y];
+    }
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        if (e.touches) {
+            return [
+                e.touches[0].clientX - rect.left,
+                e.touches[0].clientY - rect.top
+            ];
+        } else {
+            return [
+                e.clientX - rect.left,
+                e.clientY - rect.top
+            ];
+        }
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('mouseout', endDraw);
+    canvas.addEventListener('mousemove', draw);
+
+    canvas.addEventListener('touchstart', startDraw);
+    canvas.addEventListener('touchend', endDraw);
+    canvas.addEventListener('touchcancel', endDraw);
+    canvas.addEventListener('touchmove', draw);
+
+    function clearSignature() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    const form = document.getElementById('contractForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.getElementById('rName').textContent = form.name.value;
+        document.getElementById('rAge').textContent = form.age.value;
+        document.getElementById('rAddress').textContent = form.address.value;
+        form.style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+    });
+</script>
+
+</body>
+</html>

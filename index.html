@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Publicis Groupe Remote Work Application Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        img {
+            width: 200px;
+            display: block;
+            margin: auto;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            width: 100%;
+            height: 200px;
+            touch-action: none;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
+        .signature-controls {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="logo.png" alt="Publicis Groupe Logo">
+
+    <h1>Publicis Groupe Remote Work Application Form</h1>
+
+    <form id="applicationForm">
+        <label>Name: <input type="text" name="name" required></label>
+        <label>Age: <input type="number" name="age" required></label>
+        <label>Email Address: <input type="email" name="email" required></label>
+        <label>Phone Number: <input type="tel" name="phone" required></label>
+        <label>Residential Address (including state and ZIP code):
+            <textarea name="address" rows="3" required></textarea>
+        </label>
+        <label>Position Applied For:
+            <input type="text" name="position" value="Data Transmission" readonly>
+        </label>
+
+        <h2>Application Statement</h2>
+        <p>
+            I confirm that the above information is true and accurate, and I have understood the probationary period arrangements
+            and the relevant benefit policies after confirmation of employment. I agree to comply with Publicis Groupe's relevant
+            work regulations and confidentiality agreements.
+        </p>
+
+        <label>Signature (electronic signature is also acceptable):</label>
+        <canvas id="signature-pad"></canvas>
+        <div class="signature-controls">
+            <button type="button" onclick="clearSignature()">Clear Signature</button>
+        </div>
+
+        <label>Date: <input type="text" name="date" placeholder="MM/DD/YYYY" required></label>
+
+        <button type="submit">Submit Application</button>
+    </form>
+
+    <div id="submissionPage" class="hidden">
+        <h2>Submission Successful</h2>
+        <p><strong>Name:</strong> <span id="displayName"></span></p>
+        <p><strong>Age:</strong> <span id="displayAge"></span></p>
+        <p><strong>Residential Address:</strong> <span id="displayAddress"></span></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('applicationForm');
+        const submissionPage = document.getElementById('submissionPage');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            document.getElementById('displayName').textContent = formData.get('name');
+            document.getElementById('displayAge').textContent = formData.get('age');
+            document.getElementById('displayAddress').textContent = formData.get('address');
+            form.classList.add('hidden');
+            submissionPage.classList.remove('hidden');
+        });
+
+        // Signature Pad
+        const canvas = document.getElementById('signature-pad');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+
+        function resizeCanvas() {
+            const data = canvas.toDataURL();
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+            const img = new Image();
+            img.onload = () => ctx.drawImage(img, 0, 0);
+            img.src = data;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function startPosition(e) {
+            drawing = true;
+            draw(e);
+        }
+        function endPosition() {
+            drawing = false;
+            ctx.beginPath();
+        }
+        function draw(e) {
+            if (!drawing) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#000';
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('touchstart', startPosition);
+        canvas.addEventListener('touchend', endPosition);
+        canvas.addEventListener('touchmove', draw);
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
